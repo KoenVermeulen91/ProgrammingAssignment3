@@ -2,7 +2,8 @@
 
 #Reading Data
 hospital.data <- read.csv("hospital-data.csv")
-outcome.care <- read.csv("outcome-of-care-measures.csv")
+outcome <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
+
 
 ##Exploratory analysis Hospital data
 
@@ -33,9 +34,44 @@ emergency.services <- table(hospital.data$Emergency.Services)
 #str
 #dim
 
+#Assignment 1: Mortality for heart attack
+head(outcome)
+ncol(outcome)
+names(outcome)
+outcome[, 11] <- as.numeric(outcome[, 11])
+hist(outcome[, 11])
 
-
-
+#Assignment 2: Function best hospital in state
+best <- function(state, outcome) {
+        outcome <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
+        outcome[, 11] <- as.numeric(outcome[, 11])
+        outcome[, 17] <- as.numeric(outcome[, 17])
+        outcome[, 23] <- as.numeric(outcome[, 23])
+        
+        if (state %in% outcome$State) stop("invalid state")
+        if (outcome == "heart attack" | "heart failure" | "pneumonia" ) stop("invalid outcome")
+        
+        bestfilter1 <- dplyr::filter(outcome, outcome$State == state)
+        bestfilter2 <- dplyr::select(bestfilter1, outcome)
+        
+        # input state and outcome, create matrix with names and outcomes, minimize outcome, print name
+        
+        
+        }
+        
+        ## Read outcome data
+        
+        ## State
+        
+        ## Check validity of outcome ("invalid state")
+        
+        ## Outcomes can be "heart attack", "heart failure" & "pneumonia" (11, 17 & 23)
+        
+        ## Return hospital name in state with lowest 30-day death rate
+        ## Hospital name is provided in outcome$Hospital.Name
+        
+        
+}
 
 
 
