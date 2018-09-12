@@ -43,37 +43,90 @@ hist(outcome[, 11])
 
 #Assignment 2: Function best hospital in state
 best <- function(state, outcome) {
-        outcome <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
-        outcome[, 11] <- as.numeric(outcome[, 11])
-        outcome[, 17] <- as.numeric(outcome[, 17])
-        outcome[, 23] <- as.numeric(outcome[, 23])
+        outcome.df <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
+        options(warn = -1)
+        outcome.df[, 11] <- as.numeric(outcome.df[, 11])
+        outcome.df[, 17] <- as.numeric(outcome.df[, 17])
+        outcome.df[, 23] <- as.numeric(outcome.df[, 23])
         
-        if (state %in% outcome$State) stop("invalid state")
-        if (outcome == "heart attack" | "heart failure" | "pneumonia" ) stop("invalid outcome")
+        #validate input values
+        if (!(state %in% outcome.df$State)) stop("invalid state")
+        if (!(outcome %in% c("heart attack", "heart failure", "pneumonia"))) stop("invalid outcome")
         
-        bestfilter1 <- dplyr::filter(outcome, outcome$State == state)
-        bestfilter2 <- dplyr::select(bestfilter1, outcome)
+        # filter for state
+        bestm <- dplyr::filter(outcome.df, outcome.df$State == state)
+        # find hospital name with minimum rate (which.min)
+        if (outcome == "heart attack") {
+                return(bestm$Hospital.Name[which.min(bestm$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack, rm.na = T)])
+        } else {
+                if (outcome == "heart failure") {
+                        return(bestm$Hospital.Name[which.min(bestm$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure)])      
+                } else {
+                        if (outcome == "pneumonia") {
+                                return(bestm$Hospital.Name[which.min(bestm$Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia)])
+                        } else {
+                                print("nee")
+                        }
+                }
+        }
+}
+
+#Assignment 3: Ranking hospitals by outcome by state
+
+rankhospital <- function(state, outcome, num) {
+        #and the ranking of a hospital in that state for that outcome (num)
+        outcome.df <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
+        #options(warn = -1)
+        outcome.df[, 11] <- as.numeric(outcome.df[, 11])
+        outcome.df[, 17] <- as.numeric(outcome.df[, 17])
+        outcome.df[, 23] <- as.numeric(outcome.df[, 23])
         
-        # input state and outcome, create matrix with names and outcomes, minimize outcome, print name
+        #validate input values
+        if (!(state %in% outcome.df$State)) stop("invalid state")
+        if (!(outcome %in% c("heart attack", "heart failure", "pneumonia"))) stop("invalid outcome") 
         
+        bestm <- dplyr::filter(outcome.df, outcome.df$State == state)
+        #validate number of rows
+        if (num > nrow(bestm)) stop("NA")
         
+        if (outcome == "heart attack") {
+                best.ha <- bestm[order(Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)]
+                #bestm$Hospital.Name[which.min(bestm$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)]
+        } else {
+                if (outcome == "heart failure") {
+                        #bestm$Hospital.Name[which.min(bestm$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure)]      
+                } else {
+                        if (outcome == "pneumonia") {
+                                #bestm$Hospital.Name[which.min(bestm$Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia)]
+                        } else {
+                                print("nee")
+                        }
+                }
         }
         
+        
+        # The num argument can take values “best” (min!! or which.min), “worst” (max or which.max), 
+        # or an integer indicating the ranking (smaller numbers are better).
+        # order by outcome
+}
+
+rankhospital <- function(state, outcome, num = "best") {
         ## Read outcome data
-        
-        ## State
-        
-        ## Check validity of outcome ("invalid state")
-        
-        ## Outcomes can be "heart attack", "heart failure" & "pneumonia" (11, 17 & 23)
-        
-        ## Return hospital name in state with lowest 30-day death rate
-        ## Hospital name is provided in outcome$Hospital.Name
-        
-        
+        ## Check that state and outcome are valid
+        ## Return hospital name in that state with the given rank
+        ## 30-day death rate
 }
 
 
+rankhospital("TX", "heart failure", 4) # "DETAR HOSPITAL NAVARRO"
+rankhospital("MD", "heart attack", "worst") # "HARFORD MEMORIAL HOSPITAL"
+rankhospital("MN", "heart attack", 5000) #NA
+
+
+
+
+
+        
 
 
 #head(set, number of rows)
