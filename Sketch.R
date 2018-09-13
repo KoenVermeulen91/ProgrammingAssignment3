@@ -87,16 +87,21 @@ rankhospital <- function(state, outcome, num) {
         
         bestm <- dplyr::filter(outcome.df, outcome.df$State == state)
         #validate number of rows
-        if (num > nrow(bestm)) stop("NA")
+        #if (num %in% c("best", "worst")
+        if (num > nrow(bestm)) return(NA)
         
         if (outcome == "heart attack") {
-                best.ha <- bestm[order(Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)]
-                #bestm$Hospital.Name[which.min(bestm$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)]
+                best.ha <- bestm[order(bestm$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack, bestm$Hospital.Name), ]
+                return(best.ha$Hospital.Name[num])
         } else {
                 if (outcome == "heart failure") {
+                        best.hf <- bestm[order(bestm$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure, bestm$Hospital.Name), ]
+                        return(best.hf$Hospital.Name[num])
                         #bestm$Hospital.Name[which.min(bestm$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure)]      
                 } else {
                         if (outcome == "pneumonia") {
+                                best.p <- bestm[order(bestm$Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia, bestm$Hospital.Name), ]
+                                return(best.p$Hospital.Name[num])
                                 #bestm$Hospital.Name[which.min(bestm$Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia)]
                         } else {
                                 print("nee")
